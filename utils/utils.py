@@ -131,7 +131,7 @@ def postprocess(x, anchors, regression, classification, regressBoxes, clipBoxes,
                 'scores': np.array(()),
             })
 
-    return boxes_, classes_, scores_, out
+    return boxes, classes, scores, out
 
 
 def display(preds, imgs, obj_list, imshow=True, imwrite=False):
