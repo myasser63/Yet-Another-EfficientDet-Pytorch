@@ -93,6 +93,9 @@ def postprocess(x, anchors, regression, classification, regressBoxes, clipBoxes,
     scores = torch.max(classification, dim=2, keepdim=True)[0]
     scores_over_thresh = (scores > threshold)[:, :, 0]
     out = []
+    bboxes = []
+    labels = []
+    scores = []
     for i in range(x.shape[0]):
         if scores_over_thresh[i].sum() == 0:
             out.append({
@@ -112,11 +115,14 @@ def postprocess(x, anchors, regression, classification, regressBoxes, clipBoxes,
             classes_ = classes_[anchors_nms_idx]
             scores_ = scores_[anchors_nms_idx]
             boxes_ = transformed_anchors_per[anchors_nms_idx, :]
+            bboxes.append(boxes_.cpu().numpy())
+            labels.append(classes_.cpu().numpy())
+            scores.append(scores_.cpu().numpy())
 
             out.append({
-                'rois': boxes_.cpu().numpy(),
-                'class_ids': classes_.cpu().numpy(),
-                'scores': scores_.cpu().numpy(),
+                'rois': bboxes,
+                'class_ids': labels,
+                'scores': scores,
             })
         else:
             out.append({
